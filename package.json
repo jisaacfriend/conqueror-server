@@ -1,0 +1,26 @@
+{
+  "name": "lolcq-miner",
+  "version": "1.0.0",
+  "description": "Mines the data for the LoL Conqueror app.",
+  "main": "miner.js",
+  "scripts": {
+    "importChamps": "node miner.js fetchRiotChampInfo",
+    "fetchRoles": "node miner.js fetchRoles",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jisaacfriend/conqueror-server.git"
+  },
+  "author": "J. Isaac Friend",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jisaacfriend/conqueror-server/issues"
+  },
+  "homepage": "https://github.com/jisaacfriend/conqueror-server#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "mongodb": "^3.6.4",
+    "puppeteer": "^7.0.1"
+  }
+}
