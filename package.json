@@ -6,7 +6,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "mongodb": "^3.6.4",
-    "puppeteer": "^7.0.1"
+    "puppeteer": "^7.0.4"
   },
   "devDependencies": {},
   "scripts": {
