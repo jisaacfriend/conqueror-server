@@ -1,6 +1,6 @@
 const champImporter = require('./champImporter');
 const Browser = require('./components/browser');
-const roleParser = require('./components/roleParser');
+const roleParser = require('./components/blitzgg/roleParser');
 
 
 const modes = process.argv.slice(2);
