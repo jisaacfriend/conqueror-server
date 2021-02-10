@@ -12,6 +12,8 @@ const ddURL = 'https://ddragon.leagueoflegends.com';
 const now = Date.now();
 const updateInterval = 86400000;
 
+let res = 0;
+
 const importChamps = async (champs) => {
   const remainingChamps = [...champs];
   const currentChamp = remainingChamps.shift();
@@ -24,7 +26,9 @@ const importChamps = async (champs) => {
   const update = { $set: currentChamp };
   const options = { upsert: true };
 
-  await db.collection('championInfo').updateOne(filter, update, options);
+  const { matchedCount } = await db.collection('championInfo').updateOne(filter, update, options);
+
+  res += matchedCount;
 
   if (remainingChamps.length) return importChamps(remainingChamps);
   return true;
@@ -37,7 +41,7 @@ module.exports = {
       const { data: [currentLivePatch] } = await axios.get(`${ddURL}/api/versions.json`);
 
       // short-circuit if we are on the current patch and have updated recently
-      if ((currentLivePatch === currentWorkingPatch) && (now < Number(lastUpdated) + updateInterval)) return true;
+      if ((currentLivePatch === currentWorkingPatch) && (now < Number(lastUpdated) + updateInterval)) return res;
 
       const { data: { data: champInfo } } = await axios.get(`${ddURL}/cdn/${currentLivePatch}/data/en_US/champion.json`);
 
@@ -56,10 +60,15 @@ module.exports = {
       await client.connect();
 
       await importChamps(parsedChamps);
+
+      // Update the info about when last update happened
+      fs.writeFileSync('./versionHistory.txt', JSON.stringify({ lastUpdated: now, currentWorkingPatch: currentLivePatch }));
     } catch (err) {
       console.error(err);
     } finally {
       await client.close();
     }
+
+    return res;
   },
 };
