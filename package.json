@@ -1,0 +1,25 @@
+{
+  "name": "conqueror-server",
+  "version": "1.0.0",
+  "description": "The server to provide the data for the LoL Conqueror app.",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "mongodb": "^3.6.4",
+    "puppeteer": "^7.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jisaacfriend/conqueror-server.git"
+  },
+  "author": "J. Isaac Friend",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jisaacfriend/conqueror-server/issues"
+  },
+  "homepage": "https://github.com/jisaacfriend/conqueror-server#readme"
+}
