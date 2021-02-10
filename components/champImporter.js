@@ -24,7 +24,7 @@ const importChamps = async (champs) => {
   const update = { $set: currentChamp };
   const options = { upsert: true };
 
-  const res = await db.collection('championInfo').updateOne(filter, update, options);
+  await db.collection('championInfo').updateOne(filter, update, options);
 
   if (remainingChamps.length) return importChamps(remainingChamps);
   return true;
