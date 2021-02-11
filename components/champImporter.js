@@ -1,12 +1,5 @@
 const fs = require('fs');
-const dotenv = require('dotenv');
 const axios = require('axios');
-const { MongoClient } = require('mongodb');
-
-dotenv.config();
-
-const dbURI = process.env.MONGODB_URI;
-const client = new MongoClient(dbURI, { useUnifiedTopology: true, useNewUrlParser: true });
 
 const ddURL = 'https://ddragon.leagueoflegends.com';
 const now = Date.now();
@@ -21,7 +14,7 @@ let roles = {
 
 let res = 0;
 
-const importChamps = async (champs) => {
+const importChamps = async (champs, client) => {
   const remainingChamps = [...champs];
   const currentChamp = remainingChamps.shift();
 
@@ -42,7 +35,7 @@ const importChamps = async (champs) => {
 };
 
 module.exports = {
-  importChampData: async () => {
+  importChampData: async (client) => {
     try {
       const { lastUpdated, currentWorkingPatch } = JSON.parse(fs.readFileSync('./versionHistory.txt'));
       const { data: [currentLivePatch] } = await axios.get(`${ddURL}/api/versions.json`);
@@ -65,16 +58,12 @@ module.exports = {
         return champs;
       }, []);
 
-      await client.connect();
-
-      await importChamps(parsedChamps);
+      await importChamps(parsedChamps, client);
 
       // Update the info about when last update happened
       fs.writeFileSync('./versionHistory.txt', JSON.stringify({ lastUpdated: now, currentWorkingPatch: currentLivePatch }));
     } catch (err) {
       console.error(err);
-    } finally {
-      await client.close();
     }
 
     return res;
