@@ -1,3 +1,4 @@
+const browser = require('./components/browser');
 const champImporter = require('./components/champImporter');
 
 const execute = async () => {
