@@ -12,6 +12,13 @@ const ddURL = 'https://ddragon.leagueoflegends.com';
 const now = Date.now();
 const updateInterval = 86400000;
 
+let roles = {
+  blitzgg: [],
+  championgg: [],
+  opgg: [],
+  ugg: [],
+};
+
 let res = 0;
 
 const importChamps = async (champs) => {
@@ -52,6 +59,7 @@ module.exports = {
           champID,
           internalName,
           champName,
+          roles,
         });
 
         return champs;
