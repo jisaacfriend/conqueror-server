@@ -41,7 +41,7 @@ module.exports = {
       const { data: [currentLivePatch] } = await axios.get(`${ddURL}/api/versions.json`);
 
       // short-circuit if we are on the current patch and have updated recently
-      if ((currentLivePatch === currentWorkingPatch) && (now < Number(lastUpdated) + updateInterval)) return res;
+      if ((currentLivePatch === currentWorkingPatch) && (now < Number(lastUpdated) + updateInterval)) return -1;
 
       const { data: { data: champInfo } } = await axios.get(`${ddURL}/cdn/${currentLivePatch}/data/en_US/champion.json`);
 

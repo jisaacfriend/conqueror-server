@@ -9,7 +9,11 @@ const execute = async () => {
 
     await client.close();
 
-    console.log(`Imported ${importCount} champion object(s)!`);
+    const msg = importCount === -1
+      ? `Data is up-to-date. Import skipped.`
+      : `Imported ${importCount} champion object(s)!`
+
+    console.log(msg);
   } catch (err) {
     console.error(err);
   }
