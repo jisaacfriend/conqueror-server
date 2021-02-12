@@ -2,7 +2,7 @@ const Browser = require('./components/shared/browser');
 const dbClient = require('./components/shared/dbClient');
 
 const champImporter = require('./components/champImporter');
-const dataFetcher = require('./components/dataFetcher');
+const roleFetcher = require('./components/roleFetcher');
 const roleImporter = require('./components/roleImporter');
 
 const sources = ['blitzgg'];
@@ -28,7 +28,7 @@ const importRoleData = async () => {
   let BrowserInstance = await Browser.startBrowser();
 
   const roleInfo = await Promise.all(sources.map(async (source) => {
-    const roleData = await dataFetcher[source].fetchRoles(BrowserInstance);
+    const roleData = await roleFetcher[source].fetchRoles(BrowserInstance);
 
     return [source, roleData];
   }));
