@@ -4,6 +4,8 @@ const dbClient = require('./components/shared/dbClient');
 const champImporter = require('./components/champImporter');
 const roleFetcher = require('./components/roleFetcher');
 const roleImporter = require('./components/roleImporter');
+const champFetcher = require('./components/champFetcher');
+const buildImporter = require('./components/buildImporter');
 
 const sources = ['blitzgg'];
 
@@ -64,6 +66,16 @@ const importRoleData = async () => {
   await client.close();
 
   OUTPUT.forEach((count, source) => console.log(`${source}: ${count} champ roles updated!`));
+};
+
+const execute = async () => {
+  const client = await dbClient.connect();
+
+  const champsArray = await champFetcher.fetchChampInfo(client);
+
+  console.log(champsArray);
+
+  await client.close();
 };
 
 execute();
