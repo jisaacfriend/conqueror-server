@@ -2,7 +2,7 @@ module.exports = {
   fetchChampInfo: async (client) => {
     const db = client.db('lolcq');
 
-    const query = {};
+    const query = { champName: { $in: ['Pantheon', 'Neeko'] } };
     const options = {
       projection: {
         _id: 0,

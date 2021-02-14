@@ -14,7 +14,7 @@ let roles = {
 
 let res = 0;
 
-const importChamps = async (champs, client) => {
+const importChamps = async (client, champs) => {
   const remainingChamps = [...champs];
   const currentChamp = remainingChamps.shift();
 
@@ -58,7 +58,7 @@ module.exports = {
         return champs;
       }, []);
 
-      await importChamps(parsedChamps, client);
+      await importChamps(client, parsedChamps);
 
       // Update the info about when last update happened
       fs.writeFileSync('./versionHistory.txt', JSON.stringify({ lastUpdated: now, currentWorkingPatch: currentLivePatch }));

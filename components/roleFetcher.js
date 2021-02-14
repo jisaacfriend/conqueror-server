@@ -15,7 +15,7 @@ module.exports = {
 
       await page.waitForTimeout(4000);
 
-      await page.waitForSelector('[class^="Champions__TableWrapper"]')
+      await page.waitForSelector('[class^="Champions__TableWrapper"]');
 
       const champLinks = await page.evaluate(() => {
         const links = Array.from(document.querySelectorAll('.champion-link'));
