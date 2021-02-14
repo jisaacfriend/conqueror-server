@@ -81,7 +81,7 @@ const importRoleData = async () => {
   console.log('\nExecution time: %ds %dms', seconds, milliseconds);
 };
 
-const execute = async () => {
+const importBuildData = async () => {
   const client = await dbClient.connect();
 
   const champsArray = await champFetcher.fetchChampInfo(client);
@@ -101,4 +101,12 @@ const execute = async () => {
   console.log('\nImported %d builds.\nExecution time: %ds %dms', importedCount, seconds, milliseconds);
 };
 
-execute();
+const execute = async () => {};
+
+// importChampData();
+
+// importRoleData();
+
+importBuildData();
+
+// execute();

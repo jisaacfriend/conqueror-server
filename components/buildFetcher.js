@@ -2,7 +2,7 @@ const champBuilds = [];
 let retries = 0;
 
 const fetchRoleData = {
-  blitzgg: async (browser, champID, champName, roles) => Promise.all(roles.map(async (role) => {
+  blitzgg: async (browser, champName, roles) => Promise.all(roles.map(async (role) => {
     const sourceName = 'blitzgg';
     const buildURL = `https://blitz.gg/lol/champions/${champName}?role=${role}`;
 
@@ -12,7 +12,47 @@ const fetchRoleData = {
 
     await page.waitForTimeout(4000);
 
-    const [starting, ...fullBuild] = await page.evaluate(() => {
+    const [commonStarting, ...commonFullBuild] = await page.evaluate(() => {
+      const itemListDivs = Array.from(document.querySelectorAll('div[class^="ItemBuild__List"][cols="7"] div[class^="ItemBuild__Item"]'));
+
+      return itemListDivs.map((div, i) => {
+        if (i === 0) {
+          return Array.from(div.querySelectorAll('img'))
+            .map((img) => img.src.split('/item/')[1].split('.')[0]);
+        }
+
+        const imgTag = div.querySelector(`div > img`);
+        return imgTag.src.split('/item/')[1].split('.')[0];
+      });
+    });
+
+    const clickButton = async (retryCount) => {
+      try {
+        await page.evaluate(() => {
+          const button = document.querySelector('div[class^="ToggleButton"] > :nth-child(2)');
+
+          button.click();
+        });
+
+        return true;
+      } catch (err) {
+        retryCount += 1;
+        console.log(`[${sourceName}:${champName}]: Unable to click button. Retrying (${retryCount})...`);
+        return clickButton(retryCount);
+      }
+    };
+
+    await clickButton(0);
+
+    await page.evaluate(() => {
+      const button = document.querySelector('div[class^="ToggleButton"] > :nth-child(2)');
+
+      button.click();
+    });
+
+    await page.waitForTimeout(2000);
+
+    const [winrateStarting, ...winrateFullBuild] = await page.evaluate(() => {
       const itemListDivs = Array.from(document.querySelectorAll('div[class^="ItemBuild__List"][cols="7"] div[class^="ItemBuild__Item"]'));
 
       return itemListDivs.map((div, i) => {
@@ -28,24 +68,30 @@ const fetchRoleData = {
 
     await page.close();
 
-    return Promise.resolve({ sourceName, role, mostCommonItems: { starting, fullBuild } });
+    return Promise.resolve({
+      sourceName,
+      role,
+      mostCommonItems: { commonStarting, commonFullBuild },
+      highestWinRateItems: { winrateStarting, winrateFullBuild },
+    });
   })),
   championgg: async () => { },
   opgg: async () => { },
   ugg: async () => { },
 };
 
-const iterateSources = async (browser, champID, champName, sources) => {
+const iterateSources = async (browser, champID, champName, internalName, sources) => {
   const remainingSources = [...sources];
   const [currentSource, roles] = remainingSources.shift();
 
   if (roles.length) {
-    const buildData = await fetchRoleData[currentSource](browser, champID, champName, roles);
+    const buildData = await fetchRoleData[currentSource](browser, internalName, roles);
 
-    buildData.forEach(({ sourceName, role, mostCommonItems }) => {
-      const { starting, fullBuild } = mostCommonItems;
+    buildData.forEach(({ sourceName, role, mostCommonItems, highestWinRateItems }) => {
+      const { commonStarting, commonFullBuild } = mostCommonItems;
+      const { winrateStarting, winrateFullBuild } = highestWinRateItems;
 
-      if (starting === undefined) {
+      if (commonStarting === undefined || winrateStarting === undefined) {
         retries += 1;
         console.log(`[${sourceName}:${champName}]: No build data for role: ${role}. Retrying (${retries})...`);
         remainingSources.push([currentSource, [role]]);
@@ -54,27 +100,32 @@ const iterateSources = async (browser, champID, champName, sources) => {
           sourceName,
           champID,
           champName,
+          internalName,
           role,
           buildID: `${sourceName}-${champID}-${role}`,
           mostCommon: {
-            starting,
-            fullBuild
+            starting: commonStarting,
+            fullBuild: commonFullBuild,
+          },
+          highestWinRate: {
+            starting: winrateStarting,
+            fullBuild: winrateFullBuild,
           }
         });
       }
     });
   }
 
-  if (remainingSources.length) return iterateSources(browser, champID, champName, remainingSources);
+  if (remainingSources.length) return iterateSources(browser, champID, champName, internalName, remainingSources);
   return true;
 };
 
 const processChamps = async (browser, champs) => {
   const remainingChamps = [...champs];
   const currentChamp = remainingChamps.shift();
-  const { champID, champName, roles } = currentChamp;
+  const { champID, champName, internalName, roles } = currentChamp;
 
-  await iterateSources(browser, champID, champName, Object.entries(roles));
+  await iterateSources(browser, champID, champName, internalName, Object.entries(roles));
 
   if (remainingChamps.length) return processChamps(browser, remainingChamps);
   return champBuilds;

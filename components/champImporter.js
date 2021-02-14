@@ -30,7 +30,7 @@ const importChamps = async (client, champs) => {
 
   res += matchedCount;
 
-  if (remainingChamps.length) return importChamps(remainingChamps);
+  if (remainingChamps.length) return importChamps(client, remainingChamps);
   return true;
 };
 

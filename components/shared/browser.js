@@ -6,7 +6,7 @@ module.exports = {
 
     try {
       browser = await puppeteer.launch({
-        headless: true,
+        headless: false,
         'ignoreHTTPSErrors': true,
       });
     } catch (err) {
