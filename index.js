@@ -1,5 +1,11 @@
 const { hrtime } = require('process');
 
+const ARGS = require('minimist')(process.argv.slice(2), {
+  alias: {
+    i: 'import',
+  },
+});
+
 const Browser = require('./components/shared/browser');
 const dbClient = require('./components/shared/dbClient');
 
@@ -13,6 +19,8 @@ const buildImporter = require('./components/buildImporter');
 const start = hrtime();
 
 const sources = ['blitzgg'];
+
+const { i: mode } = ARGS;
 
 const importChampData = async () => {
   try {
@@ -101,12 +109,20 @@ const importBuildData = async () => {
   console.log('\nImported %d builds.\nExecution time: %ds %dms', importedCount, seconds, milliseconds);
 };
 
-const execute = async () => {};
+const execute = async () => {
+  switch(mode) {
+    case 'champs':
+      await importChampData();
+      break;
+    case 'roles':
+      await importRoleData();
+      break;
+    case 'builds':
+      await importBuildData();
+      break;
+    default:
+      break;
+  }
+};
 
-// importChampData();
-
-// importRoleData();
-
-importBuildData();
-
-// execute();
+execute();

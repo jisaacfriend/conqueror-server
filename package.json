@@ -6,11 +6,15 @@
   "dependencies": {
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
+    "minimist": "^1.2.5",
     "mongodb": "^3.6.4",
     "puppeteer": "^7.0.4"
   },
   "devDependencies": {},
   "scripts": {
+    "champImport": "node index.js -i champs",
+    "roleImport": "node index.js -i roles",
+    "buildImport": "node index.js -i builds",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
